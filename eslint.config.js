@@ -33,8 +33,13 @@ export default tseslint.config(
       globals: {
         window: 'readonly',
         document: 'readonly',
+        navigator: 'readonly',
         localStorage: 'readonly',
         fetch: 'readonly',
+        Event: 'readonly',
+        FormData: 'readonly',
+        HTMLFormElement: 'readonly',
+        HTMLInputElement: 'readonly',
         process: 'readonly',
         crypto: 'readonly',
       },

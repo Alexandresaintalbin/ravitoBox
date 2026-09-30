@@ -14,7 +14,7 @@ docker compose up -d --build
 - Application : http://localhost:8080
 - API (Kong, Auth et PostgREST) : http://localhost:8000
 
-Le premier démarrage télécharge les images, applique les migrations et charge une vingtaine de produits génériques. Aucune valeur n’est attribuée à une marque réelle : vérifiez toujours l’étiquette.
+Le premier démarrage applique les migrations et charge une vingtaine de produits génériques, sans marque réelle. Le catalogue courant vient d’Open Food Facts : `make import-products`. Vérifiez toujours l’étiquette.
 
 Studio (http://127.0.0.1:54323), Mailpit (http://127.0.0.1:8025) et Postgres (127.0.0.1:54322) écoutent uniquement sur la machine. Ils ne doivent jamais être publiés sur Internet, ni via un tunnel, ni via un reverse proxy.
 
@@ -74,6 +74,8 @@ Rechargez la session : les liens Catalogue et Comptes apparaissent.
 | `make backup` | Dump SQL horodaté dans `backups/` |
 | `make restore FILE=backups/ravitobox-….sql` | Restaure ce dump (opération destructive) |
 | `make admin EMAIL=vous@exemple.fr` | Promeut un compte confirmé au rôle admin |
+| `make import-products` | Importe un échantillon Open Food Facts (`LIMIT=400` par défaut) |
+| `make import-products DUMP=chemin.jsonl` | Même import depuis un export JSONL local, sans appel réseau |
 | `make secrets` | Affiche de nouveaux secrets à coller dans `.env` |
 
 Les valeurs de `.env.example` sont les clés de démonstration publiques de l’exemple officiel Supabase. Elles conviennent au poste local. Pour un déploiement, générez-en de nouvelles avec `make secrets`, recopiez-les dans `.env`, puis recréez les volumes (`make reset-db`) : Postgres ne change pas les mots de passe déjà initialisés.
@@ -130,6 +132,22 @@ Le poids est conservé dans le profil pour le suivi de l’athlète. Les fourche
 
 Éditez uniquement `src/engine/config.ts`, puis relancez `npm run test:coverage`. Les tests du moteur vérifient les fourchettes, les sports, les types de sortie, le climat, la tolérance et les formats de triathlon.
 
+## Catalogue Open Food Facts
+
+Données : [Open Food Facts](https://world.openfoodfacts.org/) ([licence ODbL](https://opendatacommons.org/licenses/odbl/1-0/)). Images : contributeurs Open Food Facts ([CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)). La même mention est dans le pied de page et sur chaque fiche.
+
+`make import-products` interroge l’API de recherche avec un User-Agent `ravitoBox`, une pause d’une seconde et un cache dans `.cache/off/`. Pour un import massif, téléchargez l’[export ouvert](https://world.openfoodfacts.org/data) au format JSONL et lancez `make import-products DUMP=chemin.jsonl`. Les marques ciblées sont dans `scripts/import-products/brands.txt`, les catégories dans `scripts/import-products/categories.txt`.
+
+L’import est idempotent sur le code-barres. Un produit marqué vérifié n’est jamais écrasé. Le rapport final compte les ajouts, les mises à jour, les ignorés et les rejets (portion inconnue, glucides absents, valeur aberrante, hors France, hors marques). Aucune valeur manquante n’est remplacée par zéro : le sodium, la caféine ou la portion absents restent nuls, et la fiche est `incomplete`. Les glucides supérieurs à la masse de la portion sont rejetés. Le sel est converti en sodium (sodium = sel / 2,5) seulement quand le sodium n’est pas déjà renseigné.
+
+Pendant l’import, `sharp` télécharge l’image, la convertit en WebP (vignette et détail) et l’envoie dans le bucket Storage `product-images`. À l’exécution, le navigateur ne charge aucune image externe : nginx sert `/storage/` depuis Kong. Sans image, une icône du type de produit s’affiche.
+
+La page Catalogue pagine côté serveur (`pg_trgm` sur le nom et la marque). La fiche rappelle de vérifier l’étiquette, montre les valeurs par portion et pour 100 g/ml, et propose un lien Open Food Facts. « Où l’acheter » est un lien et un prix saisis à la main : pas de paiement, pas d’affiliation, pas de prix récupéré.
+
+Un utilisateur qui corrige un produit du catalogue crée une copie privée. L’admin la voit dans « À vérifier », peut la promouvoir, marquer une fiche comme vérifiée, ou fusionner deux doublons (même code-barres, ou même nom et même marque). Le plan ignore un produit dont les glucides sont inconnus. S’il utilise un produit non vérifié, ou dont le sodium ou la caféine sont inconnus, il l’affiche dans les avertissements et compte l’inconnu comme zéro, sans inventer la valeur.
+
+Les photos personnelles (JPEG, PNG ou WebP, 2 Mo, type vérifié sur les octets) vont dans `users/{id}/`. Seul ce compte peut les remplacer ou les supprimer. Seul un admin écrit dans `catalog/`.
+
 ## Coûts
 
 Tout le socle utilisé ici est gratuit, y compris pour un usage personnel auto-hébergé.
@@ -145,6 +163,11 @@ Tout le socle utilisé ici est gratuit, y compris pour un usage personnel auto-h
 | Studio et postgres-meta | Apache 2.0 | 0 € |
 | nginx | BSD-2-Clause | 0 € |
 | Mailpit | MIT | 0 € |
+| Open Food Facts (données) | ODbL | 0 € |
+| Images Open Food Facts | CC BY-SA 4.0 | 0 € |
+| sharp | Apache 2.0 | 0 € |
+| pg_trgm (PostgreSQL) | PostgreSQL License | 0 € |
+| Supabase Storage (auto-hébergé) | Apache 2.0 | 0 € |
 | Tailscale, Cloudflare Tunnel | offres gratuites des éditeurs, avec leurs plafonds | 0 € tant que l’on reste dans le palier gratuit |
 
 Un nom de domaine, une machine virtuelle ou un dépassement de palier cloud sont les seuls coûts éventuels. Ils ne sont pas exigés pour faire tourner ravitoBox.

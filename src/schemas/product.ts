@@ -10,7 +10,7 @@ const optionalText = (max: number, label: string) =>
     .transform((value) => (value ? value : null))
 
 export const productSchema = z.object({
-  name: z.string().trim().min(1, 'Le nom est requis.').max(120, '120 caractères maximum.'),
+  name: z.string().trim().min(1, 'Le nom est requis.').max(160, '160 caractères maximum.'),
   brand: optionalText(80, 'Marque'),
   productType: z.enum(PRODUCT_TYPES, { required_error: 'Le type est requis.', invalid_type_error: 'Type inconnu.' }),
   flavor: optionalText(40, 'Saveur'),

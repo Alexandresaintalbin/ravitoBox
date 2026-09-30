@@ -2,6 +2,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import AppAlert from '@/components/AppAlert.vue'
+import Stepper from '@/components/Stepper.vue'
 import AppSpinner from '@/components/AppSpinner.vue'
 import EmptyState from '@/components/EmptyState.vue'
 import ProductCard from '@/components/ProductCard.vue'
@@ -33,10 +34,12 @@ async function setQuantity(productId: string, quantity: number) {
 </script>
 
 <template>
-  <section class="stack">
+  <section class="stack wizard">
+    <Stepper :step="2" />
     <header class="row">
       <h1>Ma Box</h1>
-      <RouterLink class="button primary" to="/app/produits/nouveau">Créer un produit</RouterLink>
+      <RouterLink class="button primary" to="/app/catalogue">Parcourir le catalogue</RouterLink>
+      <RouterLink class="button ghost" to="/app/produits/nouveau">Créer un produit</RouterLink>
       <button class="button ghost" type="button" @click="showCatalog = !showCatalog">
         {{ showCatalog ? 'Fermer le catalogue' : 'Ajouter depuis le catalogue' }}
       </button>

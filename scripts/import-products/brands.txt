@@ -1,0 +1,33 @@
+# slug Open Food Facts | nom affiché
+# Une marque courte (3 lettres ou moins) n'est retenue que si elle est exactement le jeton de marque.
+maurten|Maurten
+science-in-sport|Science in Sport
+sis|SiS
+overstims|Overstims
+baouw|Baouw
+meltonic|Meltonic
+isostar|Isostar
+aptonia|Aptonia
+powerbar|PowerBar
+gu|GU
+naak|Näak
+tailwind|Tailwind
+enervit|Enervit
+nutripure|Nutripure
+hydratis|Hydratis
+stc-nutrition|STC Nutrition
+apurna|Apurna
+atlet|Atlet
+punch-power|Punch Power
+eafit|Eafit
+clif|Clif
+skratch|Skratch
+neversecond|Neversecond
+torq|Torq
+high5|High5
+4endurance|4Endurance
+mnstr|MNSTR
+precision-fuel|Precision Fuel & Hydration
+precision-hydration|Precision Hydration
+winforce|Winforce
+decathlon|Decathlon

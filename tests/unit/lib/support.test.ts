@@ -125,10 +125,57 @@ describe('mappers et box', () => {
       volume_ml: null,
       scope: 'catalog',
       owner_id: null,
-      created_at: '',
-      updated_at: '',
     })
     expect(mapped.carbsG).toBe(22)
+    expect(mapped.sodiumKnown).toBe(true)
+    expect(mapped.source).toBe('manual')
+    const full = mapProduct({
+      id: 'p2',
+      name: 'Barre',
+      brand: 'Baouw',
+      product_type: 'barre',
+      flavor: null,
+      carbs_g: null,
+      sodium_mg: null,
+      caffeine_mg: null,
+      volume_ml: '90',
+      scope: 'custom',
+      owner_id: 'u',
+      barcode: '12345678',
+      serving_label: '1 barre',
+      serving_size: '40',
+      serving_unit: 'g',
+      carbs_per_100: 50,
+      sugars_g: 10,
+      sugars_per_100: 20,
+      energy_kj: 400,
+      energy_kj_per_100: 1000,
+      sodium_per_100: 10,
+      caffeine_per_100: 0,
+      image_path: 'users/u/p2.webp',
+      image_credit: 'Ada',
+      source: 'off',
+      source_url: 'https://world.openfoodfacts.org/product/12345678',
+      data_quality: 'complete',
+      verified: true,
+      buy_url: 'https://exemple.fr',
+      indicative_price_eur: '2.5',
+      off_last_modified: '2026-01-01',
+      origin_id: 'p1',
+      carbs_known: false,
+    })
+    expect(full.carbsKnown).toBe(false)
+    expect(full.sodiumKnown).toBe(false)
+    expect(full.verified).toBe(true)
+    expect(full.servingUnit).toBe('g')
+    expect(full.dataQuality).toBe('complete')
+    const base = {
+      id: 'p3', name: 'Eau', brand: null, product_type: 'eau' as const, flavor: null, carbs_g: 0,
+      sodium_mg: 0, caffeine_mg: 0, volume_ml: null, scope: 'catalog' as const, owner_id: null,
+    }
+    expect(mapProduct({ ...base, source: 'user', serving_unit: 'ml', data_quality: 'nope', verified: false }).source).toBe('user')
+    expect(mapProduct({ ...base, source: 'bizarre', serving_unit: 'kg' }).servingUnit).toBeNull()
+    expect(mapProduct({ ...base, source: 'manual', carbs_known: true }).carbsKnown).toBe(true)
   })
 
   it('fusionne la box et prépare le moteur', () => {
@@ -146,6 +193,10 @@ describe('mappers et box', () => {
       true,
     )
     expect(withPlain.every((item) => item.preferredFlavor === false)).toBe(true)
+    const flagged = product({ carbsKnown: false, sodiumKnown: false, caffeineKnown: false, imagePath: 'a.webp', verified: false })
+    const planned = toPlannerProducts(mergeBox([flagged], [{ productId: 'p1', quantity: 1, excluded: false }], []), [flagged], [], false)
+    expect(planned[0]?.carbsKnown).toBe(false)
+    expect(planned[0]?.imagePath).toBe('a.webp')
     const inside = toPlannerProducts(entries, catalog, [], false)
     expect(inside.every((item) => item.inBox)).toBe(true)
   })

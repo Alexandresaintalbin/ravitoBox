@@ -64,7 +64,7 @@ async function submit() {
 <template>
   <section class="stack">
     <h1>Catalogue commun</h1>
-    <p class="muted">Réservé aux administrateurs. Les produits restent génériques : pas de marque réelle inventée.</p>
+    <p class="muted">Réservé aux administrateurs. Les fiches importées se vérifient dans « À vérifier ».</p>
     <AppSpinner v-if="box.loading && box.catalog.length === 0" />
     <AppAlert v-if="errors || box.error" :message="errors || box.error || ''" />
     <ul class="stack">

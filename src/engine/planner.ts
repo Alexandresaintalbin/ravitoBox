@@ -176,6 +176,7 @@ function slotsFor(segment: SegmentSummary): number[] {
 
 function toPool(products: PlannerProduct[], allowOutsideBox: boolean, warnings: Warning[]): PoolItem[] {
   const pool: PoolItem[] = []
+  let skippedUnknownCarbs = false
   if (products.length === 0) {
     warnings.push(warn('EMPTY_BOX', 'La Box est vide : ajoutez des produits avant de construire un plan.'))
     return pool
@@ -187,6 +188,10 @@ function toPool(products: PlannerProduct[], allowOutsideBox: boolean, warnings: 
   }
   for (const product of products) {
     if (product.excluded) continue
+    if (product.carbsKnown === false) {
+      skippedUnknownCarbs = true
+      continue
+    }
     const inBox = product.inBox
     if (!inBox && !allowOutsideBox) continue
     const stock = isFiniteNumber(product.stock) ? Math.floor(product.stock) : null
@@ -197,6 +202,11 @@ function toPool(products: PlannerProduct[], allowOutsideBox: boolean, warnings: 
     } else {
       pool.push(decorate(product, Number.POSITIVE_INFINITY, true))
     }
+  }
+  if (skippedUnknownCarbs) {
+    warnings.push(
+      warn('UNKNOWN_CARBS', 'Un produit sans glucides connus a été ignoré. Aucune valeur n’a été inventée.'),
+    )
   }
   if (pool.length === 0) {
     if (products.some((product) => product.inBox && !product.excluded)) {
@@ -379,6 +389,9 @@ function shoppingList(
       toBring: count,
       missing,
       inBox: product.inBox,
+      brand: product.brand ?? null,
+      imagePath: product.imagePath ?? null,
+      productType: product.type,
     })
   }
   const carbGap = targets.carbsG - totals.carbsG
@@ -497,6 +510,21 @@ export function buildPlan(request: PlanRequest): GeneratedPlan {
   if (stockEmptied && (coverage.carbs < 1 || coverage.fluid < 1 || coverage.sodium < 1)) {
     warnings.push(
       warn('INSUFFICIENT_STOCK', 'Le stock de la Box est épuisé avant d’atteindre les cibles.'),
+    )
+  }
+  if (request.products.some((product) => (used.get(product.id) ?? 0) > 0 && product.verified === false)) {
+    warnings.push(
+      warn('UNVERIFIED_PRODUCT', 'Le plan utilise un produit qui n’a pas été vérifié. Contrôlez l’étiquette.'),
+    )
+  }
+  if (request.products.some((product) => (used.get(product.id) ?? 0) > 0 && product.sodiumKnown === false)) {
+    warnings.push(
+      warn('UNKNOWN_SODIUM', 'Le sodium d’un produit utilisé est inconnu : il compte pour zéro, sans valeur inventée.'),
+    )
+  }
+  if (request.products.some((product) => (used.get(product.id) ?? 0) > 0 && product.caffeineKnown === false)) {
+    warnings.push(
+      warn('UNKNOWN_CAFFEINE', 'La caféine d’un produit utilisé est inconnue : elle compte pour zéro, sans valeur inventée.'),
     )
   }
   if (totals.caffeineMg > nutritionConfig.planner.caffeineCautionMg) {

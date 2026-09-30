@@ -55,6 +55,12 @@ export function toPlannerProducts(
     excluded: entry.excluded,
     favorite: entry.favorite,
     preferredFlavor: entry.product.flavor ? preferred.has(entry.product.flavor.toLowerCase()) : false,
+    carbsKnown: entry.product.carbsKnown !== false,
+    sodiumKnown: entry.product.sodiumKnown !== false,
+    caffeineKnown: entry.product.caffeineKnown !== false,
+    verified: entry.product.verified,
+    brand: entry.product.brand,
+    imagePath: entry.product.imagePath ?? null,
   }))
   if (!allowOutsideBox) return fromBox
   const outside: PlannerProduct[] = catalog
@@ -73,6 +79,12 @@ export function toPlannerProducts(
       excluded: false,
       favorite: false,
       preferredFlavor: product.flavor ? preferred.has(product.flavor.toLowerCase()) : false,
+      carbsKnown: product.carbsKnown !== false,
+      sodiumKnown: product.sodiumKnown !== false,
+      caffeineKnown: product.caffeineKnown !== false,
+      verified: product.verified,
+      brand: product.brand,
+      imagePath: product.imagePath ?? null,
     }))
   return [...fromBox, ...outside]
 }

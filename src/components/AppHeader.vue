@@ -28,10 +28,12 @@ async function logout() {
       <template v-if="auth.isAuthenticated && !guest">
         <RouterLink to="/app" :aria-current="route.name === 'dashboard' ? 'page' : undefined">Tableau</RouterLink>
         <RouterLink to="/app/box" :aria-current="route.name === 'box' ? 'page' : undefined">Ma Box</RouterLink>
+        <RouterLink to="/app/catalogue">Catalogue</RouterLink>
         <RouterLink to="/app/sortie">Nouvelle sortie</RouterLink>
         <RouterLink to="/app/plans">Plans</RouterLink>
         <RouterLink to="/app/badges">Badges</RouterLink>
-        <RouterLink v-if="auth.isAdmin" to="/app/admin/catalogue">Catalogue</RouterLink>
+        <RouterLink v-if="auth.isAdmin" to="/app/admin/catalogue">Catalogue admin</RouterLink>
+        <RouterLink v-if="auth.isAdmin" to="/app/admin/verification">À vérifier</RouterLink>
         <RouterLink v-if="auth.isAdmin" to="/app/admin/comptes">Comptes</RouterLink>
         <RouterLink to="/app/compte">Compte</RouterLink>
         <button class="button ghost" type="button" @click="logout">Déconnexion</button>

@@ -65,6 +65,15 @@ services:
           allow:
             - admin
             - anon
+  - name: storage-v1
+    url: http://storage:5000/
+    routes:
+      - name: storage-v1-all
+        strip_path: true
+        paths:
+          - /storage/v1/
+    plugins:
+      - name: cors
   - name: meta
     url: http://meta:8080/
     routes:

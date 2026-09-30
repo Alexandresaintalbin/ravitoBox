@@ -1,0 +1,34 @@
+# tag Open Food Facts, type ravitoBox, puis open si la marque n'est pas filtrée
+en:energy-gels gel open
+en:sports-gels gel open
+en:isotonic-drinks boisson open
+en:sports-drinks boisson open
+en:energy-drinks boisson open
+en:recovery-drinks boisson open
+en:drink-mixes boisson open
+en:energy-bars barre open
+en:cereal-bars barre open
+en:fruit-pastes pate_de_fruit open
+en:fruit-jellies pate_de_fruit open
+en:compotes compote open
+en:fruit-compotes compote open
+en:fruit-purees compote open
+en:apple-sauces compote open
+en:electrolyte-tablets capsule_sel open
+en:electrolytes capsule_sel open
+en:energy-chews autre open
+en:protein-bars barre open
+en:protein-energy-bars barre open
+en:fruits-cereal-bars barre open
+en:bars barre open
+en:protein-powders boisson open
+en:dietary-drink-for-sport boisson open
+en:fruits-puree-without-sugar-added compote open
+fr:barres nutritionnelles barre open
+fr:purée nutritionnelle compote open
+fr:produits pour sportifs autre open
+en:sports-nutrition autre
+en:bodybuilding-supplements autre
+en:dietary-supplements capsule_sel
+en:sweet-snacks autre
+en:snacks autre

@@ -23,6 +23,8 @@ export const router = createRouter({
       children: [
         { path: '', name: 'dashboard', component: () => import('@/views/DashboardView.vue') },
         { path: 'box', name: 'box', component: () => import('@/views/BoxView.vue') },
+        { path: 'catalogue', name: 'catalog', component: () => import('@/views/CatalogView.vue') },
+        { path: 'catalogue/:id', name: 'product', component: () => import('@/views/ProductDetailView.vue') },
         { path: 'produits/nouveau', name: 'product-new', component: () => import('@/views/ProductFormView.vue') },
         { path: 'produits/:id', name: 'product-edit', component: () => import('@/views/ProductFormView.vue') },
         { path: 'sortie', name: 'outing', component: () => import('@/views/OutingView.vue') },
@@ -42,6 +44,12 @@ export const router = createRouter({
           path: 'admin/comptes',
           name: 'admin-accounts',
           component: () => import('@/views/AdminAccountsView.vue'),
+          meta: { requiresAdmin: true },
+        },
+        {
+          path: 'admin/verification',
+          name: 'admin-review',
+          component: () => import('@/views/AdminReviewView.vue'),
           meta: { requiresAdmin: true },
         },
       ],

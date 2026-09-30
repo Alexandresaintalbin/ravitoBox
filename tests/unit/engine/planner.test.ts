@@ -482,6 +482,34 @@ describe('buildPlan', () => {
     expect(plan.intakes).toEqual([])
     expect(plan.warnings.map((warning) => warning.code)).toContain('INSUFFICIENT_STOCK')
   })
+
+  it('ignore les glucides inconnus et signale un produit non vérifié', () => {
+    const unknown = product({ id: 'inconnu', name: 'Inconnu', carbsKnown: false, inBox: true, stock: 4 })
+    const used = product({
+      id: 'gel-off',
+      name: 'Gel importé',
+      brand: 'Maison',
+      imagePath: 'catalog/1.webp',
+      verified: false,
+      sodiumKnown: false,
+      caffeineKnown: false,
+      stock: 6,
+    })
+    const plan = buildPlan(request({ products: [unknown, used], durationMinutes: 90 }))
+    expect(plan.intakes.some((intake) => intake.productId === 'inconnu')).toBe(false)
+    expect(plan.intakes.some((intake) => intake.productId === 'gel-off')).toBe(true)
+    const codes = plan.warnings.map((warning) => warning.code)
+    expect(codes).toContain('UNKNOWN_CARBS')
+    expect(codes).toContain('UNVERIFIED_PRODUCT')
+    expect(codes).toContain('UNKNOWN_SODIUM')
+    expect(codes).toContain('UNKNOWN_CAFFEINE')
+    const line = plan.shoppingList.find((item) => item.productId === 'gel-off')
+    expect(line?.brand).toBe('Maison')
+    expect(line?.imagePath).toBe('catalog/1.webp')
+    const onlyUnknown = buildPlan(request({ products: [unknown], durationMinutes: 60 }))
+    expect(onlyUnknown.intakes).toEqual([])
+    expect(onlyUnknown.warnings.map((warning) => warning.code)).toContain('UNKNOWN_CARBS')
+  })
 })
 
 describe('formatPlanText', () => {

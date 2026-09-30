@@ -1,4 +1,6 @@
-.PHONY: up down logs test test-integration test-e2e reset-db dev admin secrets backup restore
+.PHONY: up down logs test test-integration test-e2e reset-db dev admin secrets backup restore import-products
+
+LIMIT ?= 400
 
 up:
 	docker compose up -d --build
@@ -36,6 +38,9 @@ backup:
 restore:
 	@test -n "$(FILE)" || (echo "Usage: make restore FILE=backups/ravitobox-YYYYMMDD-HHMMSS.sql" && exit 1)
 	docker compose exec -T db psql -U supabase_admin -d postgres -v ON_ERROR_STOP=1 < "$(FILE)"
+
+import-products:
+	npx tsx scripts/import-products/cli.ts --limit $(LIMIT) $(if $(DUMP),--dump $(DUMP),)
 
 admin:
 	@test -n "$(EMAIL)" || (echo "Usage: make admin EMAIL=vous@exemple.fr" && exit 1)

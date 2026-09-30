@@ -2,6 +2,7 @@
 import { computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import AppAlert from '@/components/AppAlert.vue'
+import Stepper from '@/components/Stepper.vue'
 import FormField from '@/components/FormField.vue'
 import ShoppingList from '@/components/ShoppingList.vue'
 import Timeline from '@/components/Timeline.vue'
@@ -54,8 +55,9 @@ async function save() {
 </script>
 
 <template>
-  <section class="stack">
-    <h1>Paramètres de la sortie</h1>
+  <section class="stack wizard">
+    <Stepper :step="1" />
+    <h1>Ma sortie</h1>
     <form class="card stack" @submit.prevent="generate">
       <FormField label="Nom" :error="outing.fieldErrors.value.title">
         <input v-model="outing.form.value.title" required />

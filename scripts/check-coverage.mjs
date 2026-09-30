@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs'
 const summary = JSON.parse(readFileSync(new URL('../coverage/coverage-summary.json', import.meta.url), 'utf8'))
 const rules = [
   { label: 'moteur', test: (file) => file.includes('/src/engine/'), lines: 100, branches: 100 },
+  { label: 'conversion catalogue', test: (file) => file.includes('/src/lib/catalog/'), lines: 100, branches: 100 },
   { label: 'logique métier', test: (file) => /\/src\/(schemas|stores|composables|lib)\//.test(file), lines: 90, branches: 90 },
 ]
 

@@ -110,6 +110,12 @@ export interface PlannerProduct {
   excluded?: boolean
   favorite?: boolean
   preferredFlavor?: boolean
+  carbsKnown?: boolean
+  sodiumKnown?: boolean
+  caffeineKnown?: boolean
+  verified?: boolean
+  brand?: string | null
+  imagePath?: string | null
 }
 
 export interface PlanIntake {
@@ -134,6 +140,9 @@ export interface ShoppingLine {
   toBring: number
   missing: number
   inBox: boolean
+  brand?: string | null
+  imagePath?: string | null
+  productType?: ProductType
 }
 
 export interface SegmentSummary {

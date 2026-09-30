@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ProductImage from '@/components/ProductImage.vue'
 import type { Product } from '@/lib/mappers'
 import { productTypeLabels } from '@/lib/labels'
 import { formatGrams, formatMg, formatMl } from '@/lib/format'
@@ -9,6 +10,7 @@ defineEmits<{ add: []; copy: []; edit: []; remove: [] }>()
 
 <template>
   <article class="card stack">
+    <ProductImage :name="product.name" :type="product.type" :image-path="product.imagePath" />
     <header class="row">
       <h3>{{ product.name }}</h3>
       <span v-if="preferred" class="muted">Saveur préférée</span>
@@ -19,7 +21,8 @@ defineEmits<{ add: []; copy: []; edit: []; remove: [] }>()
       <template v-if="product.brand"> · {{ product.brand }}</template>
     </p>
     <p>
-      {{ formatGrams(product.carbsG) }} glucides · {{ formatMg(product.sodiumMg) }} sodium
+      {{ product.carbsKnown === false ? 'glucides non renseignés' : formatGrams(product.carbsG) + ' glucides' }}
+      · {{ product.sodiumKnown === false ? 'sodium non renseigné' : formatMg(product.sodiumMg) + ' sodium' }}
       <template v-if="product.caffeineMg"> · {{ formatMg(product.caffeineMg) }} caféine</template>
       <template v-if="product.volumeMl"> · {{ formatMl(product.volumeMl) }}</template>
     </p>
